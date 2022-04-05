@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Biblios : Ajouter ou modifier un book
+{% endblock %}
+
+{% block body %}
+	{# {{ form(formArticle) }} #}
+	{% if mode %}
+		<h1>Modifier un book</h1>
+	{% else %}
+		<h1>Créer un book</h1>
+	{% endif %}
+	<div class="container">
+		{{form_start(form)}}
+		{{form_row(form.title,{label:'Titre','attr':{'placeholder':"Entrer le titre du livre"}})}}
+		{{form_row(form.author,{label:'Auteur','attr':{'placeholder':"Entrer le nom de l'auteur"}})}}
+		{{form_row(form.stock,{label:'Stock','attr':{'placeholder':"Entrer la quantité en stock"}})}}
+		{{form_row(form.available,{label:'Quantité','attr':{'placeholder':"Entrer la quantité restante"}})}}
+		{{form_row(form.synopsis,{label:'Description','attr':{'placeholder':"Entrer la description"}})}}
+		{{form_row(form.image,{label:'Image','attr':{'placeholder':"Charger l'image"}})}}
+		<br>
+		{% if mode %}
+			<button class="btn btn-success" type="submit">Mettre à jour le book</button>
+		{% else %}
+			<button class="btn btn-success" type="submit">Créer le livre</button>
+		{% endif %}
+		{{form_end(form)}}
+	</div>
+{% endblock %}
