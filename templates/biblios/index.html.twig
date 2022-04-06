@@ -3,7 +3,9 @@
 {% endblock %}
 {% block body %}
 	<h1>Liste des Livres</h1>
-
+ {# {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %} #}
 	<div class="row row-cols-1 row-cols-md-3 g-4">
 		{% for book in books %}
 			<div class="col">
@@ -13,6 +15,7 @@
 					<div class="card-body">
 						<h5 class="card-title">{{book.title}}</h5>
 						<p class="card-text">{{book.synopsis}}</p>
+						<p class="card-text">{{book.available}}/{{book.stock}}</p>
 					</div>
 					{% if is_granted('ROLE_ADMIN') %}
 						<a class="btn btn-warning" href="{{path('book-edit',{'id': book.id}) }}" class="card-link">Modifier</a>

@@ -1,20 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BorrowController!{% endblock %}
+{% block title %}Hello BorrowController!
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+	<h1>Liste des Emprunts</h1>
+	<div class="container">
+		<table class="table">
+			<thead>
+				<tr>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/77011-63-03/Documents/Projets_symfony/Biblios/src/Controller/BorrowController.php'|file_link(0) }}">src/Controller/BorrowController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/77011-63-03/Documents/Projets_symfony/Biblios/templates/borrow/index.html.twig'|file_link(0) }}">templates/borrow/index.html.twig</a></code></li>
-    </ul>
-</div>
-{% endblock %}
+					<th class="text-center">Id</th>
+					<th class="text-center">Date de retour</th>
+					<th class="text-center">Titre du livre</th>
+					<th class="text-center">Nom emprunteur</th>
+					<th class="text-center">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+                
+		{% for borrow in borrows %}
+
+        {# <pre>
+            {{ dump(borrow) }}
+        </pre> #}
+
+						<td class="text-center">{{ borrow.id }}</td>
+						<td class="text-center">{{ borrow.returnDate | date("d/m/Y") }}</td>
+						<td class="text-center">{{ borrow.books.title }}</td>
+						<td class="text-center">{{ app.user.firstName }}</td>
+						<td class="text-center">
+							<a class="btn btn-success" href="#">Retourner</a>
+						</td>
+					</tr>
+					{# <tr>
+											<td colspan="7" class="text-center">Aucun enregistrement trouvé</td>
+										</tr> #}
+				</tr>
+			</tbody>
+		{% endfor %}
+	</table>
+
+	{# <a class="btn btn-primary" href="{{ path('app_user_new') }}">Créer un nouveau user</a> #}
+</div>{% endblock %}
