@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
-use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 // use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,13 +15,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class BookController extends AbstractController
 {
     /**
-     * @Route("/", name="app_book")
+     * @Route("/book", name="app_book")
      */
-    public function index(BookRepository $bookRepository): Response
+    public function index(): Response
     {
-        $books = $bookRepository->findAll();
         return $this->render('book/index.html.twig', [
-            'books'=>$books
+            // 'books'=>$books
         ]);
     }
 
@@ -35,9 +33,7 @@ class BookController extends AbstractController
         Request $req,
         EntityManagerInterface $em
     ) {
-        // if (!$this->isGranted('ROLE_ADMIN')) {
-		// 	return $this->render('/error/accessDenied.html.twig');
-		// }
+       
         if (!$book) {
             $book = new book();
         }
@@ -45,8 +41,7 @@ class BookController extends AbstractController
         $form = $this->createForm(BookType::class, $book);
 
         $form->handleRequest($req);
-        // dump($req);
-        // dump($article);
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($book);
             $em->flush();
