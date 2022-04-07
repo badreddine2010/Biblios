@@ -30,9 +30,9 @@
 						<td class="text-center">{{ borrow.id }}</td>
 						<td class="text-center">{{ borrow.returnDate | date("d/m/Y") }}</td>
 						<td class="text-center">{{ borrow.books.title }}</td>
-						<td class="text-center">{{ app.user.firstName }}</td>
+						<td class="text-center">{{ borrow.users.firstName }}</td>
 						<td class="text-center">
-							<a class="btn btn-success" href="#">Retourner</a>
+							<a class="btn btn-success" href="{{path('return_book',{'id': borrow.id,'book':borrow.books.id})}}">Retourner</a>
 						</td>
 					</tr>
 					{# <tr>

@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\BorrowRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Book;
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BorrowRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=BorrowRepository::class)

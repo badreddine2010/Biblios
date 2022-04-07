@@ -3,9 +3,9 @@
 {% endblock %}
 {% block body %}
 	<h1>Liste des Livres</h1>
- {# {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %} #}
+ {% for message in app.flashes('error') %}
+	<div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
 	<div class="row row-cols-1 row-cols-md-3 g-4">
 		{% for book in books %}
 			<div class="col">
@@ -19,8 +19,8 @@
 					</div>
 					{% if is_granted('ROLE_ADMIN') %}
 						<a class="btn btn-warning" href="{{path('book-edit',{'id': book.id}) }}" class="card-link">Modifier</a>
-						<a class="btn btn-danger" href="{{path('book-delete',{'id': book.id})}}" class="card-link">supprimer</a>
-					{% else %}
+						<a class="btn btn-danger" href="{{path('book-delete',{'id': book.id})}}" class="card-link" onclick="return confirm('Are you sure you want to delete this item?');">supprimer</a>
+					{% elseif app.user %}
 						<a class="btn btn-danger" href="{{path('borrow_add',{'id': book.id,'user':app.user.id})}}" class="card-link">Emprunter</a>
 					{% endif %}
 				</div>
