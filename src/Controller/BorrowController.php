@@ -34,12 +34,14 @@ class BorrowController extends AbstractController
     public function indexUser(BorrowRepository $borrowRepository, UserInterface $user): Response
     {
 
+        $borrows = $borrowRepository->findBy(['users' => $user]);
         return $this->render('borrow/index.html.twig', [
             'borrows' => $borrowRepository->findBy(['users' => $user]),
+            'totalBorrows'=>count($borrows)
         ]);
     }
-
-
+    
+    
     /**
      *@Route("/borrow/add/{id}/{user}", name="borrow_add")
      */
@@ -49,55 +51,56 @@ class BorrowController extends AbstractController
         Book $book,
         EntityManagerInterface $em,
         User $user
-    ) {
-        $idBook=true;
-        $borrows = $borrowRepository->findBy(['users' => $user]);
-        // dd(count($borrows));
-        for ($i = 0; $i < count($borrows); $i++) {
-            # code...
-            // echo($borrows[$i]->getBooks()->getId());
-            if ($book->getId()==$borrows[$i]->getBooks()->getId()) {
+        ) {
+            $idBook = true;
+            $borrows = $borrowRepository->findBy(['users' => $user]);
+            // dd(count($borrows));
+            for ($i = 0; $i < count($borrows); $i++) {
                 # code...
-                $idBook=false;
+                // echo($borrows[$i]->getBooks()->getId());
+                if ($book->getId() == $borrows[$i]->getBooks()->getId()) {
+                    # code...
+                    $idBook = false;
+                    $this->addFlash('error', "Vous l'avez déjà emprunté");
+                    return $this->redirectToRoute('home');
             }
         }
-                $nbreMax = 4;
-                $nbreEmprunts = count($borrows);
-                if ($nbreEmprunts < $nbreMax && ($idBook)) {
-                    # code...
+        $nbreMax = 4;
+        $nbreEmprunts = count($borrows);
+        if ($nbreEmprunts < $nbreMax && ($idBook)) {
+            # code...
 
-                    $qteRestante = $book->getAvailable();
-                    // '$nbreEmprunts' => $userRepository->findBy(['user'=>$user]);
-                    if ($qteRestante >= 1) {
+            $qteRestante = $book->getAvailable();
+            // '$nbreEmprunts' => $userRepository->findBy(['user'=>$user]);
+            if ($qteRestante >= 1) {
 
-                        $qteRestante--;
-                        $book->setAvailable($qteRestante);
+                $qteRestante--;
+                $book->setAvailable($qteRestante);
 
-                        $em->persist($book);
-                        $em->flush();
-                        // dd($qteRestante);
-                        // dd($user);
+                $em->persist($book);
+                $em->flush();
+                // dd($qteRestante);
+                // dd($user);
 
-                        $borrow = new Borrow();
-                        $borrow->setUsers($user);
-                        $borrow->setBooks($book);
+                $borrow = new Borrow();
+                $borrow->setUsers($user);
+                $borrow->setBooks($book);
 
-                        $now = date('Y-m-d');
-                        $start_date = strtotime($now);
-                        $end_date = strtotime('+15 day', $start_date);
-                        $dateRetour = date('Y-m-d', $end_date);
-                        $borrow->setReturnDate(new \DateTimeImmutable($dateRetour));
+                $now = date('Y-m-d');
+                $start_date = strtotime($now);
+                $end_date = strtotime('+15 day', $start_date);
+                $dateRetour = date('Y-m-d', $end_date);
+                $borrow->setReturnDate(new \DateTimeImmutable($dateRetour));
 
-                        $em->persist($borrow);
-                        $em->flush();
-                    }
-                }
-            
-        
-        // die;
-        // $this->addFlash('error', "Vous n'avez pas les droits necessaires pour accèder à cette fonction");
-        $this->addFlash('error', "Vous n'avez pas les droits necessaires...");
+                $em->persist($borrow);
+                $em->flush();
+            }
+        }else {
 
+            $this->addFlash('error', "Vous êtes au maximum de livres empruntés");
+            return $this->redirectToRoute('home');
+        }
+        $this->addFlash('success', "livre ajouté à votre compte");
         return $this->redirectToRoute('home');
     }
 
@@ -113,17 +116,9 @@ class BorrowController extends AbstractController
 
         $em->persist($book);
         $em->flush();
-        // dd($qteRestante);
-        // dd($user);
-
-        // $borrow = new Borrow();
-        // $borrow->setUsers($user);
-        // $borrow->setBooks($book);
 
         $entityManager = $doctrine->getManager();
         $borrow = $entityManager->getRepository(Borrow::class)->find($id);
-
-
 
         $entityManager->remove($borrow);
         $entityManager->flush();

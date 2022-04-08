@@ -5,43 +5,58 @@
 
 {% block body %}
 
-	<h1>Liste des Emprunts</h1>
-	<div class="container">
-		<table class="table">
-			<thead>
-				<tr>
+<h1>Liste des Emprunts</h1>
+<div class="container">
+	{% if app.user and not is_granted("ROLE_ADMIN") %}
 
-					<th class="text-center">Id</th>
-					<th class="text-center">Date de retour</th>
-					<th class="text-center">Titre du livre</th>
-					<th class="text-center">Nom emprunteur</th>
+		<h3 class="text-center">Vous avez emprunté :
+			{{totalBorrows}}
+			Livres sur
+			{{4}}
+			possibles</h3>
+	{% endif %}
+	<table class="table">
+		<thead>
+			<tr>
+
+				<th class="text-center">Id</th>
+				<th class="text-center">Date de retour</th>
+				<th class="text-center">Titre du livre</th>
+				<th class="text-center">Nom emprunteur</th>
+				{% if is_granted("ROLE_ADMIN") %}
+					<th class="text-center">Livres disponibles</th>
+				{% else %}
 					<th class="text-center">Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-                
-		{% for borrow in borrows %}
+				{% endif %}
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
 
-        {# <pre>
-            {{ dump(borrow) }}
-        </pre> #}
+				{% for borrow in borrows %}
+					{# <pre>
+																												            {{ dump(borrow) }}
+																												        </pre> #}
+					<td class="text-center">{{ borrow.id }}</td>
+					<td class="text-center">{{ borrow.returnDate | date("d/m/Y") }}</td>
+					<td class="text-center">{{ borrow.books.title }}</td>
+					<td class="text-center">{{ borrow.users.firstName }}</td>
+					{% if is_granted("ROLE_ADMIN") %}
+						<td class="text-center">{{borrow.books.available}}/{{borrow.books.stock}}</td>
 
-						<td class="text-center">{{ borrow.id }}</td>
-						<td class="text-center">{{ borrow.returnDate | date("d/m/Y") }}</td>
-						<td class="text-center">{{ borrow.books.title }}</td>
-						<td class="text-center">{{ borrow.users.firstName }}</td>
+					{% else %}
+
+
 						<td class="text-center">
 							<a class="btn btn-success" href="{{path('return_book',{'id': borrow.id,'book':borrow.books.id})}}">Retourner</a>
 						</td>
-					</tr>
-					{# <tr>
-											<td colspan="7" class="text-center">Aucun enregistrement trouvé</td>
-										</tr> #}
+					{% endif %}
 				</tr>
-			</tbody>
-		{% endfor %}
-	</table>
-
-	{# <a class="btn btn-primary" href="{{ path('app_user_new') }}">Créer un nouveau user</a> #}
-</div>{% endblock %}
+			</tr>
+		</tbody>
+	</tr>
+{% else %}
+	<tr>
+		<td colspan="7" class="text-center">Aucun enregistrement trouvé</td>
+	</tr>
+</tbody>{% endfor %}</table></div>{% endblock %}

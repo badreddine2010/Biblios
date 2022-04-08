@@ -4,8 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\BookRepository;
 // use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,10 +18,11 @@ class BookController extends AbstractController
     /**
      * @Route("/book", name="app_book")
      */
-    public function index(): Response
+    public function indexBook(BookRepository $bookRepository): Response
     {
+        $books = $bookRepository->findAll();
         return $this->render('book/index.html.twig', [
-            // 'books'=>$books
+            'books'=>$books
         ]);
     }
 
@@ -45,7 +47,7 @@ class BookController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($book);
             $em->flush();
-            return $this->redirectToRoute('app_book', [
+            return $this->redirectToRoute('home', [
                 'id' => $book->getId(),
             ]);
         }
@@ -75,7 +77,7 @@ class BookController extends AbstractController
         $entityManager->remove($book);
         $entityManager->flush();
         
-        return $this->redirectToRoute('app_book', [
+        return $this->redirectToRoute('home', [
             'id' => $book->getId()
         ]);
     }
